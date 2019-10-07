@@ -1,0 +1,53 @@
+Sub Valuation()
+'
+' Valuation MSub Valuation()
+'
+' Valuation Macro
+'
+' Keyboard Shortcut: Ctrl+a
+'
+ Dim rowCnt As Integer
+ Dim ssrc As String
+ Dim sline As String
+ Dim s As String
+ Dim i As Long
+ Dim strTmp() As String
+ Dim strKeyword As String
+ Dim strKeyvalue As String
+ 
+ rowCnt = 2
+ 
+Do
+ 
+If Cells(rowCnt, 1).Value = "" Then Exit Do
+ 
+'save the value in temp
+ ssrc = Cells(rowCnt, 1)
+'Scan one by one
+ For i = 1 To Len(ssrc)
+     s = Mid(ssrc, i, 1)
+'edit the line when there are line break
+     If s = vbLf Then
+        'if there are EOL, move to the next line
+        If sline <> "" Then
+            'split the line
+            strTmp() = Split(sline, " ")
+            'Save the variable
+            strKeyword = strTmp(1)
+            'delete the ";"
+            strKeyvalue = Replace(strTmp(3), ";", "")
+            'replace the string from word -> value
+            Cells(rowCnt, 3) = Replace(Cells(rowCnt, 3), strKeyword, strKeyvalue)
+        End If
+        'initialize counter
+        sline = ""
+     ElseIf s <> vbCr Then
+         sline = sline & s
+     End If
+Next
+ 
+rowCnt = rowCnt + 1
+ 
+Loop
+ 
+End Sub
