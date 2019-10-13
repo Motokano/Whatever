@@ -1,0 +1,91 @@
+Option Explicit
+
+Public Sub ExecOutput()
+Const adTypeBinary = 1
+Const adTypeText = 2
+Dim rowCnt      As Integer
+Dim strNewSql   As String
+Dim strFName    As String
+Dim strDName    As String
+Dim strFPath    As String
+Dim objRStream  As Object
+Dim objWStream  As Object
+Dim strText     As String
+Dim binText()   As Byte
+Dim bookThis    As Workbook
+Dim shtThis     As Worksheet
+Set bookThis = ThisWorkbook
+Set shtThis = bookThis.Sheets("BIND")
+strDName = bookThis.Sheets("Main").Cells(4, 8).Value
+
+Set objRStream = CreateObject("ADODB.Stream")
+objRStream.Type = adTypeText  
+objRStream.Charset = "SHIFT_JIS" 
+objRStream.LineSeparator = 10 'LF
+'UTF8
+Set objWStream = CreateObject("ADODB.Stream")
+objWStream.Charset = "UTF-8" 'UTF-8
+objWStream.LineSeparator = 10 'LF
+
+rowCnt = 0
+    
+    Do
+        strFName = shtThis.Cells(ROW_T_START + rowCnt, 2).Value
+        strFPath = strDName & "\" & strFName & ".sql"
+    
+        If strFName = "" Then
+            Exit Do
+        End If
+                
+        'If shtThis.Cells(ROW_T_START + rowCnt, COL_T_FLG_EXEC).Value = "嵪" Then
+        
+            objRStream.Open
+            
+            objRStream.WriteText "EXPLAIN (ANALYZE ON, VERBOSE ON)" & C_LF
+               
+            
+            objRStream.WriteText shtThis.Cells(ROW_T_START + rowCnt, COL_T_OUT_TEXT).Value
+            objRStream.Position = 0
+            objRStream.LineSeparator = 10 'LF
+            
+            objWStream.Type = adTypeText
+            objWStream.Open
+            
+            Do Until objRStream.EOS = True
+            
+                strText = Replace(objRStream.ReadText(-2), Chr(9), "    ")
+                
+                If Trim(strText) <> "" And Trim(strText) <> vbCr Then
+                    objWStream.WriteText strText & C_LF, 0
+                End If
+            
+            Loop
+            
+            objRStream.Close
+            
+            objWStream.WriteText ";", 1
+            objWStream.WriteText "rollback;", 1
+            
+            objWStream.Position = 0
+            objWStream.Type = adTypeBinary
+            objWStream.Position = 3
+            binText = objWStream.Read
+            objWStream.Close
+            objWStream.Open
+            objWStream.Write binText
+            objWStream.Position = objWStream.Size 'Loop twice
+            objWStream.Write binText
+            objWStream.Position = objWStream.Size
+            objWStream.Write binText
+            
+            objWStream.SaveToFile strFPath, 2
+            objWStream.Close
+        
+        'End If
+        rowCnt = rowCnt + 1
+    
+    Loop
+    Set objRStream = Nothing
+    Set objWStream = Nothing
+    
+End Sub
