@@ -22,7 +22,8 @@
 
 cat testlog| grep jsr_batch_run_id | awk -F' ' '{print $2 " " $3 " " $15 " " $20}'
 
-
+cat testlog| grep jsr_batch_run_id | awk -F' ' '{print $2 " " $3 " " $15 " " $20}' > data
+while read line; do for i in `echo $line | awk -F' ' '{print $3}'| grep -oe '\([0-9.]*\)'`; do echo -n "id:${i} "; echo -n "start:"; grep $i data | grep -v COMPLETED |awk -F' ' '{print $1 " " $2}';  echo -n "end:"; grep $i data | grep COMPLETED |awk -F' ' '{print $1 " " $2}'; done ; done < data
 ■ファイルを一か所に集めるツール 3人日
 　要件：ツールはmbacdb01サーバ、mbmcdb01サーバ、bzacdb01サーバにそれぞれ配置する
 　目的：既に一か所に集まっているので不要でした。。「/work/app/resource_get/csv」
