@@ -1,0 +1,37 @@
+■hinemos情報取得するツール(BizHawkEye) 3人日
+　要件1：ログの中に一部下記のログが出力される（同時実行たまにあり）ので
+ mbacbt01	2020/05/19 22:05:18.658	INFO 	main	SimpleJobLauncher   	Job: [FlowJob: [name=bsch001]] launched with  the following parameters: [{jsr_batch_run_id=161333}]
+ mbacbt01	2020/05/19 22:05:19.053	INFO 	main	SimpleJobLauncher   	Job: [FlowJob: [name=bsch001]] completed wit h the following parameters: [{jsr_batch_run_id=161333}] and the following status: [COMPLETED]
+　　　csv形式で下記で出力する（目的としては処理時間をこの後作るツールで集計できればいいのでどちらのパターンでもよいです）
+　　　パターン1：「jsr_batch_run_idの値,開始時間,終了時間」（id一つにつき1行)
+　　　パターン2：「jsr_batch_run_idの値,開始時間」
+　　　　　　　　 「jsr_batch_run_idの値,終了時間」（id一つにつき2行)
+ インプット：/work/backup/log/mbacbt01/app/sync/mbacbt01_YYYYMM*****_bsch001.log.bz2
+ shの引数：YYYYMM(対象年月）
+ 参考sh：/work/app/resource_get/shell/accesslog_get.sh
+         （ログを解答するまでは似てると思います。）
+
+■hinemos情報集計するツール(BizHawkEye) 3人日
+■hinemos情報取得するツール(BizHawkEye2) 2人日
+■hinemos情報集計するツール(BizHawkEye2) 2人日
+■hinemos情報取得するツール(通信M) 2人日
+■hinemos情報集計するツール(通信M) 2人日
+■hinemos情報取得するツール(認証基盤) 2人日
+■hinemos情報集計するツール(認証基盤) 2人日
+
+
+
+
+■ファイルを一か所に集めるツール 3人日
+　要件：ツールはmbacdb01サーバ、mbmcdb01サーバ、bzacdb01サーバにそれぞれ配置する
+　目的：既に一か所に集まっているので不要でした。。「/work/app/resource_get/csv」
+　参考スクリプト：mbacdb01サーバの/kiban/script/LogBackup.sh
+　（基盤が基盤のログを他サーバから同期してmbacdb01サーバに集めているスクリプト）
+
+■zip化するツール 3人日
+
+■運用管理サーバに転送するツール 3人日
+　要件：DBサーバから運用管理サーバの対象ディレクトリに転送する
+　目的：自動化転送ツールの対象ディレクトリにファイルを配置したい
+　参考スクリプト：mbacdb01サーバの/kiban/script/LogBackup.sh
+　（基盤が基盤のログを他サーバから同期してmbacdb01サーバに集めているスクリプト）
