@@ -20,6 +20,7 @@
 ■hinemos情報集計するツール(認証基盤) 2人日
 
 
+cat testlog| grep jsr_batch_run_id | awk -F' ' '{print $2 " " $3 " " $15 " " $20}'
 
 
 ■ファイルを一か所に集めるツール 3人日
