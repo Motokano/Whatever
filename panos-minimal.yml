@@ -1,0 +1,21 @@
+---
+- name: Minimal PAN-OS automation
+  hosts: palo
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Create address object
+      paloaltonetworks.panos.panos_address_object:
+        provider:
+          hostname: "{{ ansible_host }}"
+          username: "{{ username }}"
+          password: "{{ password }}"
+        name: ansible-test
+        value: 10.10.10.10
+        description: Created by Ansible
+    - name: Commit config
+      paloaltonetworks.panos.panos_commit:
+        provider:
+          hostname: "{{ ansible_host }}"
+          username: "{{ username }}"
+          password: "{{ password }}"
